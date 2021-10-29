@@ -1,16 +1,32 @@
 #include <iostream>
 #include <vector>
+#include <set>
 #define int long long
 using namespace std;
 
-/*
+
+/* USING MERGE SORT
     COUNTING INVERSIONS IN Array
         We use DivideNConqer
         Almost identical to merge sort routine.
         In merge routine we count actual number of inversions.
         Running-Time : 0(nlogn) i.e., sub-quadratic
 
+
+   USING STL set
+    COUNTING NUMBER OF INVERSIONS
+      Initialize empty set & insert first element
+      for all i: 1 to n-1
+        insert a[i] into set 
+        set itr to first element greater than a[i] in set using upper_bound();
+        add the distance to this itr from last element into inversion counts
+    RUNNING TIME: 0(n) : Linera Order of growth
 */
+
+
+// Prototype for soltion using Set.
+int invUsingSet (vector<int>&);
+
 
 // Counts inversions for A. given LEFT and RIGHT subarrays about some appropiate MID.
 int merge (vector<int>& a, vector<int>& left, vector<int>& right) {
@@ -45,6 +61,7 @@ int merge (vector<int>& a, vector<int>& left, vector<int>& right) {
   return inv;
 }
 
+
 int countInv (vector<int> a) {
   // Base-cases
   if (a.size() == 1) return 0;
@@ -65,6 +82,7 @@ int countInv (vector<int> a) {
   return inv;
 }
 
+
 int32_t main () {
     int n;
     cout<<"Enter number of elements in your array: ";
@@ -73,9 +91,32 @@ int32_t main () {
     for (int i = 0; i < n; i++) {
         cin>>arr[i];
     }
-    int inversions = countInv(arr);
+    int inversions = invUsingSet(arr);//countInv(arr);
     cout<<"Number of inversions in given array is: "<<inversions<<'\n';
     return 0;
+}
+
+
+int invUsingSet (vector<int>& arr) {
+  // Inversion counter
+  int inversions = 0, n = arr.size();
+
+  // Return zero for empty arrays
+  if (n == 0) return 0;
+
+  multiset<int> sset; // We use multiset in order to obtain right answers in case of duplicat elements.
+  sset.insert(arr[0]);
+  
+  multiset<int>::iterator itr;
+  for (int i = 1; i < n; i++) {
+    sset.insert(arr[i]);
+    // Find smallest elemnt in sset greater than arr[i]
+    itr = sset.upper_bound(arr[i]);
+    // add distance between itr and end to inverion counter.
+    inversions += distance (itr, sset.end());
+  }
+  // Return number of inversion
+  return inversions;
 }
 
 
